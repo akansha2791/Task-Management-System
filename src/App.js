@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import ProgressBar from './ProgressBar';
 
 const BoardContainer = styled.div`
   display: flex;
@@ -10,7 +11,7 @@ const BoardContainer = styled.div`
 const Column = styled.div`
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 30%;
+  width: 40%;
   padding: 10px;
   background-color: #f9f9f9;
 `;
@@ -23,6 +24,8 @@ const Task = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+
+
 
 const App = () => {
   const [columns, setColumns] = useState([]);
@@ -56,33 +59,38 @@ const App = () => {
 
     if (currentTask.status === 'To Do') {
       currentTask.status = 'In Progress';
+      setProgress(50);
     } else if (currentTask.status === 'In Progress') {
       currentTask.status = 'Done';
+      setProgress(100);
     } else {
       currentTask.status = 'To Do';
+      setProgress(0);
     }
     
     setColumns(updatedColumns);
   };
 
+  const [progress, setProgress] = useState(0);
+
+
   return (
-    <div>
+    <><div>
       <h1>Task Management Board</h1>
       <BoardContainer>
         {columns.map((column, index) => (
           <Column key={index}>
             <h3>{column.name}</h3>
-            <input 
-              type="text" 
-              value={selectedColumn === index ? taskInput : ''} 
+            <input
+              type="text"
+              value={selectedColumn === index ? taskInput : ''}
               onChange={(e) => {
                 setTaskInput(e.target.value);
                 setSelectedColumn(index);
-              }} 
-              placeholder="Add a new task" 
-            />
+              } }
+              placeholder="Add a new task" />
             <button onClick={addTask}>Add Task</button>
-           
+
             {column.tasks.map((task, taskIndex) => (
               <Task key={taskIndex}>
                 {task.name} - {task.status}
@@ -90,15 +98,20 @@ const App = () => {
                   <button onClick={() => changeTaskStatus(index, taskIndex)}>Change Status</button>
                   <button onClick={() => removeTask(index, taskIndex)}>Remove</button>
                 </div>
+                <div>
+              <ProgressBar progress={progress} />
+            </div>
               </Task>
+              
             ))}
           </Column>
         ))}
+        
       </BoardContainer>
       <button onClick={addColumn}>Add Column</button>
-    </div>
+      
+    </div></>
   );
 };
 
 export default App;
-
